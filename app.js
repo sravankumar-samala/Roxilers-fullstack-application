@@ -32,3 +32,7 @@ let db;
         console.log(error.message);
     }
 })();
+
+app.get('/', (req, res) => {
+    res.send('Serives are started.')
+})
