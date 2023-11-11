@@ -1,1 +1,2 @@
-GET 'https://localhost:5003/products'
+GET http://localhost:8008/products
+###

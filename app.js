@@ -9,7 +9,6 @@ const fetch = require('node-fetch');
 const app = express();
 app.use(express.json());
 app.use(cors());
-
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Credentials", true);
     next();
@@ -17,7 +16,6 @@ app.use((req, res, next) => {
 
 const dbPath = path.join(__dirname, "roxilers.db");
 const port = process.env.PORT || 8008;
-// const port = 5003
 let db;
 
 
@@ -29,7 +27,7 @@ let db;
         });
 
 
-        console.log('Initializing Database')
+        // console.log('Initializing Database')
         await initializeDatabase()
 
         app.listen(port, () => {
@@ -95,7 +93,7 @@ async function initializeDatabase() {
             console.log(error.message)
         }
     }
-    console.log('Initialized Database')
+    // console.log('Initialized Database')
 }
 
 app.get('/products', async (reqest, response) => {
