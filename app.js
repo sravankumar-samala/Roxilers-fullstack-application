@@ -1,24 +1,33 @@
-const express = require("express");
-const sqlite3 = require("sqlite3");
-const path = require("path");
-const { open } = require("sqlite");
-const cors = require('cors');
-const fetch = require('node-fetch');
+import express, { json } from "express";
+import sqlite3 from "sqlite3";
+import { join, dirname } from "path";
+import { open } from "sqlite";
+import cors from 'cors';
+import { fileURLToPath } from "url";
 
+// apis 
+import initializeDatabase from "./controllers/initializeDatabase.js";
+import getListOfTransactions from "./controllers/getListOfTransactions.js";
+import getStatistics from "./controllers/getStatistics.js";
+import getBarChartData from "./controllers/getBarChartData.js";
+import getCategoriesData from "./controllers/getCategoriesData.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
-app.use(express.json());
+app.use(json());
 app.use(cors());
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Credentials", true);
     next();
 });
 
-const dbPath = path.join(__dirname, "roxilers.db");
+const dbPath = join(__dirname, "roxiler.db");
 const port = process.env.PORT || 8008;
 let db;
 
-
+// Set up database and initialize
 (async () => {
     try {
         db = await open({
@@ -27,7 +36,7 @@ let db;
         });
 
 
-        // console.log('Initializing Database')
+        console.log('CHECK: Initializing Database')
         await initializeDatabase()
 
         app.listen(port, () => {
@@ -38,65 +47,21 @@ let db;
     }
 })();
 
-app.get('/', (req, res) => {
-    res.send('Serives are started.')
-})
 
-async function initializeDatabase() {
-    const checkTableExistQuery = `SELECT name
-                                  FROM sqlite_master
-                                  WHERE type='table' AND name='product_transactions';`
+const getAllProductsData = async (req, res) => {
+    try {
+        const productsData = await db.all('SELECT * FROM product_transactions;');
 
-    const isTableExists = await db.get(checkTableExistQuery)
-    console.log(isTableExists)
-
-    if (!isTableExists) {
-        // create table if table doesn't exists 
-        await db.run(
-            `CREATE TABLE product_transactions (
-                id INTEGER PRIMARY KEY,
-                title TEXT,
-                price REAL,
-                description TEXT,
-                category TEXT,
-                image TEXT,
-                sold BOOLEAN,
-                dateOfSale TEXT
-            );`
-        );
-
-
-        const thirdPartyDataUrl = 'https://s3.amazonaws.com/roxiler.com/product_transaction.json'
-        try {
-            const response = await fetch(thirdPartyDataUrl)
-            if (!response.ok) throw new Error('Something goes wrong dealing with third party data fetching.')
-
-            const data = await response.json()
-            const insertDataQuery = `INSERT INTO product_transactions 
-                                (id, title, price, description, category, image, sold, dateOfSale)
-                                VALUES (?, ?, ?, ?, ?, ?, ?, ?);`
-
-            for (let eachItem of data) {
-                await db.run(insertDataQuery,
-                    [eachItem.id,
-                    eachItem.title,
-                    eachItem.price,
-                    eachItem.description,
-                    eachItem.category,
-                    eachItem.image,
-                    eachItem.sold,
-                    eachItem.dateOfSale]
-                )
-            }
-
-        } catch (error) {
-            console.log(error.message)
-        }
+        res.send(productsData)
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
-    // console.log('Initialized Database')
 }
 
-app.get('/products', async (reqest, response) => {
-    const productsData = await db.all('SELECT * FROM product_transactions;');
-    response.send(productsData)
-})
+app.get('/all-products', getAllProductsData)
+app.get("/list-transactions", getListOfTransactions)
+app.get('/statistics', getStatistics)
+app.get('/categories-data', getCategoriesData)
+app.get('/price-range', getBarChartData)
+
+export { db }
