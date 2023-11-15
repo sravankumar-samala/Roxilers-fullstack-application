@@ -2,10 +2,10 @@ import { db } from '../app.js'
 
 
 const getListOfTransactions = async (req, res) => {
-    let { searchValue, month, page } = req.query
+    let { searchValue, month, page, limit } = req.query
     month = month || '3'
     page = page || '1'
-    const limit = 3 //default
+    limit = limit || 10//default
 
     let getTotalDataQuery = 'SELECT * FROM product_transactions'
 
