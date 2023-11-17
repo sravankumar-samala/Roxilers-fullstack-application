@@ -5,10 +5,10 @@ GET http://localhost:8008/list-transactions?searchValue=&page=1&month=5&limit=10
 ###
 
 GET http://localhost:8008/statistics?month=12
-###body
+###
 
 GET http://localhost:8008/categories-data
 ###
 
-GET http://localhost:8008/price-range
+GET http://localhost:8008/bar-chart-stats?month=
 ###

@@ -62,6 +62,6 @@ app.get('/all-products', getAllProductsData)
 app.get("/list-transactions", getListOfTransactions)
 app.get('/statistics', getStatistics)
 app.get('/categories-data', getCategoriesData)
-app.get('/price-range', getBarChartData)
+app.get('/Bar-chart-stats', getBarChartData)
 
 export { db }

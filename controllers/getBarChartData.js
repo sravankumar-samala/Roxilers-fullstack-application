@@ -1,7 +1,8 @@
 import { db } from '../app.js'
 
 const getBarChartData = async (req, res) => {
-    const month = 7
+    let { month } = req.query
+    month = month || 3
     const getBarChartDataQuery = `SELECT 
                                     CASE
                                     WHEN price BETWEEN 0 AND 100 THEN '0 - 100'
