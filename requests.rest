@@ -1,14 +1,14 @@
 GET http://localhost:8008/all-products
 ###
 
-GET http://localhost:8008/list-transactions?searchValue=&page=1&month=5&limit=10
+GET http://localhost:8008/list-transactions?searchValue=&page=1&month=5&limit=1
 ###
 
 GET http://localhost:8008/statistics?month=12
 ###
 
-GET http://localhost:8008/categories-data
+GET http://localhost:8008/categories-data?month=9
 ###
 
-GET http://localhost:8008/bar-chart-stats?month=
+GET http://localhost:8008/bar-chart-stats?month=9
 ###

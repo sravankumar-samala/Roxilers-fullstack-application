@@ -1,7 +1,7 @@
 import { db } from '../app.js'
 
 const getCategoriesData = async (req, res) => {
-    const month = 7
+    const { month } = req.query
     const getCategoriesQuery = `SELECT
                                     category,
                                     COUNT(*) AS item_count
